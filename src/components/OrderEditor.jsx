@@ -14,7 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { SignaturePad } from "@/components/SignaturePad";
 import {
   ACESSORIOS, MARCA_IOS, MARCAS_ANDROID, MODELOS_IPHONE,
-  formatBRLFromDigits, formatPhone, garantiaDias, validar,
+  formatBRLFromDigits, formatPhone, garantiaDaOrdem, validar,
 } from "@/lib/os";
 
 const vazio = (numero = "") => ({
@@ -129,7 +129,7 @@ export function OrderEditor({ numero }) {
     setPdf(null); setOs(vazio(numeroUnico(orders.map(o => o.numero)))); setEditing(false); setSavedSignature(null); sig.current?.clear(); setOutraMarca(false); window.scrollTo({ top: 0 });
   };
 
-  const dias = os.garantiaSnapshot ?? garantiaDias(os.servico, Number(os.garantiaCustom));
+  const dias = garantiaDaOrdem(os);
   if (numero && !existing && !editing) return <main className="p-8">Ordem não encontrada.</main>;
 
   if (pdf) {

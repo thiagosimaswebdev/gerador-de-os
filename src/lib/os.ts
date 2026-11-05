@@ -58,6 +58,10 @@ export function garantiaDias(servico: Servico | "", custom?: number): number | n
   return null;
 }
 
+export function garantiaDaOrdem(o: Pick<OSData, "garantiaSnapshot" | "servico" | "garantiaCustom">): number | null {
+  return o.garantiaSnapshot ?? garantiaDias(o.servico, Number(o.garantiaCustom));
+}
+
 export function gerarNumeroOS(date = new Date(), rand = Math.random): string {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, "0");
