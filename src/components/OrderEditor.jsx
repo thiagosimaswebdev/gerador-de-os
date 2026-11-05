@@ -1,3 +1,4 @@
+import React from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useWorkshop } from "@/contexts/WorkshopContext";
 import { STATUS, numeroUnico, mensagemWhatsApp } from "@/lib/os";
@@ -5,7 +6,6 @@ import { imageFromFile } from "@/services/images";
 import { Camera, Trash2, Save, ArrowLeft, Send } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Toaster } from "@/components/ui/sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,8 +13,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SignaturePad } from "@/components/SignaturePad";
 import {
-  ACESSORIOS, CHECKLIST, MARCA_IOS, MARCAS_ANDROID, MODELOS_IPHONE, SERVICOS,
-  formatBRLFromDigits, formatPhone, garantiaDias, gerarNumeroOS, validar,
+  ACESSORIOS, MARCA_IOS, MARCAS_ANDROID, MODELOS_IPHONE,
+  formatBRLFromDigits, formatPhone, garantiaDias, validar,
 } from "@/lib/os";
 
 const vazio = (numero = "") => ({
@@ -32,10 +32,11 @@ function Card({ title, children }) {
   );
 }
 function Field({ label, req, children }) {
+  const id = `order-${label.replace(/[^a-zA-Z0-9]/g, "-")}`;
   return (
     <div className="space-y-1.5">
-      <Label className="text-sm font-medium">{label}{req && <span className="text-destructive"> *</span>}</Label>
-      {children}
+      <Label htmlFor={id} className="text-sm font-medium">{label}{req && <span className="text-destructive"> *</span>}</Label>
+      {React.isValidElement(children) && [Input, Textarea, "select"].includes(children.type) ? React.cloneElement(children, { id }) : children}
     </div>
   );
 }
@@ -68,7 +69,7 @@ export function OrderEditor({ numero }) {
   const [busy, setBusy] = useState(false);
   const sig = useRef(null);
   const set = (k, v) => setOs((p) => ({ ...p, [k]: v }));
-  const [outraMarca, setOutraMarca] = useState(false);
+  const [outraMarca, setOutraMarca] = useState(Boolean(existing?.so === "Android" && !MARCAS_ANDROID.includes(existing?.marca)));
   const trocarSO = (s) => {
     setOs((p) => ({ ...p, so: s, marca: s === "iPhone (iOS)" ? MARCA_IOS : "", modelo: "" }));
     setOutraMarca(false);
@@ -78,8 +79,8 @@ export function OrderEditor({ numero }) {
   const persist = async () => {
     const err = validar(os);
     if (err) { toast.error(err); return null; }
-    const assinatura = sig.current?.toDataURL() ?? savedSignature;
-    const saved = await saveOrder({ ...os, assinatura, empresa: os.empresa || { ...settings.empresa } }, editing);
+    const assinatura = sig.current ? sig.current.toDataURL() : savedSignature;
+    const saved = await saveOrder({ ...os, assinatura, empresa: { ...settings.empresa } }, editing);
     setOs(saved); setEditing(true); setSavedSignature(assinatura);
     return saved;
   };
@@ -124,6 +125,7 @@ export function OrderEditor({ numero }) {
   };
   const nova = () => {
     if (pdf) URL.revokeObjectURL(pdf.url);
+    if (numero) { navigate({ to: "/ordens/nova" }); return; }
     setPdf(null); setOs(vazio(numeroUnico(orders.map(o => o.numero)))); setEditing(false); setSavedSignature(null); sig.current?.clear(); setOutraMarca(false); window.scrollTo({ top: 0 });
   };
 
@@ -138,7 +140,7 @@ export function OrderEditor({ numero }) {
           <p className="text-xs font-semibold uppercase tracking-normal text-primary">PDF gerado</p>
           <h1 className="text-2xl font-extrabold">{os.numero}</h1>
         </header>
-        <iframe src={pdf.url} title="Prévia do PDF" className="h-[60vh] w-full rounded-2xl border bg-card shadow-card" />
+        <iframe src={pdf.url} title="Prévia do PDF" className="h-[60vh] w-full rounded-lg border bg-card" />
         <div className="grid gap-3">
           <Button size="lg" className="h-12 text-base font-bold" onClick={compartilhar}>COMPARTILHAR PDF</Button>
           <Button size="lg" variant="outline" className="h-12 text-base font-bold" onClick={baixar}>BAIXAR PDF</Button>
@@ -204,7 +206,7 @@ export function OrderEditor({ numero }) {
 
       <Card title="Serviço">
         <Field label="Serviço executado" req>
-          <select className={selectCls} value={os.serviceId || (os.servico === "Outros" ? "outros" : "")} onChange={(e) => { const service = settings.services.find(s => s.id === e.target.value); setOs(p => ({ ...p, serviceId: e.target.value, servico: service?.nome || "Outros", garantiaSnapshot: service?.dias, serviceObservation: service?.observacao || "" })); }}>
+          <select className={selectCls} value={os.serviceId || (os.servico === "Outros" ? "outros" : "")} onChange={(e) => { const service = settings.services.find(s => s.id === e.target.value); setOs(p => ({ ...p, serviceId: e.target.value, servico: service?.nome || (e.target.value === "outros" ? "Outros" : ""), garantiaSnapshot: service?.dias, garantiaCustom: "", serviceObservation: service?.observacao || "" })); }}>
             <option value="">Selecione…</option>
             {settings.services.map(s => <option key={s.id} value={s.id}>{s.nome}</option>)}
             {os.serviceId && os.serviceId !== "outros" && !settings.services.some(s => s.id === os.serviceId) && <option value={os.serviceId}>{os.servico}</option>}
