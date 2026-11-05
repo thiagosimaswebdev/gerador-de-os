@@ -10,33 +10,115 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ChecklistRouteImport } from './routes/checklist'
+import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
+import { Route as HistoricoRouteImport } from './routes/historico'
+import { Route as ServicosRouteImport } from './routes/servicos'
+import { Route as OrdensNumeroRouteImport } from './routes/ordens.$numero'
+import { Route as OrdensNovaRouteImport } from './routes/ordens.nova'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ChecklistRoute = ChecklistRouteImport.update({
+  id: '/checklist',
+  path: '/checklist',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfiguracoesRoute = ConfiguracoesRouteImport.update({
+  id: '/configuracoes',
+  path: '/configuracoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HistoricoRoute = HistoricoRouteImport.update({
+  id: '/historico',
+  path: '/historico',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicosRoute = ServicosRouteImport.update({
+  id: '/servicos',
+  path: '/servicos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrdensNumeroRoute = OrdensNumeroRouteImport.update({
+  id: '/ordens/$numero',
+  path: '/ordens/$numero',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrdensNovaRoute = OrdensNovaRouteImport.update({
+  id: '/ordens/nova',
+  path: '/ordens/nova',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/checklist': typeof ChecklistRoute
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/historico': typeof HistoricoRoute
+  '/servicos': typeof ServicosRoute
+  '/ordens/$numero': typeof OrdensNumeroRoute
+  '/ordens/nova': typeof OrdensNovaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/checklist': typeof ChecklistRoute
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/historico': typeof HistoricoRoute
+  '/servicos': typeof ServicosRoute
+  '/ordens/$numero': typeof OrdensNumeroRoute
+  '/ordens/nova': typeof OrdensNovaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/checklist': typeof ChecklistRoute
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/historico': typeof HistoricoRoute
+  '/servicos': typeof ServicosRoute
+  '/ordens/$numero': typeof OrdensNumeroRoute
+  '/ordens/nova': typeof OrdensNovaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/checklist'
+    | '/configuracoes'
+    | '/historico'
+    | '/servicos'
+    | '/ordens/$numero'
+    | '/ordens/nova'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/checklist'
+    | '/configuracoes'
+    | '/historico'
+    | '/servicos'
+    | '/ordens/$numero'
+    | '/ordens/nova'
+  id:
+    | '__root__'
+    | '/'
+    | '/checklist'
+    | '/configuracoes'
+    | '/historico'
+    | '/servicos'
+    | '/ordens/$numero'
+    | '/ordens/nova'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ChecklistRoute: typeof ChecklistRoute
+  ConfiguracoesRoute: typeof ConfiguracoesRoute
+  HistoricoRoute: typeof HistoricoRoute
+  ServicosRoute: typeof ServicosRoute
+  OrdensNumeroRoute: typeof OrdensNumeroRoute
+  OrdensNovaRoute: typeof OrdensNovaRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +130,59 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/checklist': {
+      id: '/checklist'
+      path: '/checklist'
+      fullPath: '/checklist'
+      preLoaderRoute: typeof ChecklistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/configuracoes': {
+      id: '/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/configuracoes'
+      preLoaderRoute: typeof ConfiguracoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/historico': {
+      id: '/historico'
+      path: '/historico'
+      fullPath: '/historico'
+      preLoaderRoute: typeof HistoricoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/servicos': {
+      id: '/servicos'
+      path: '/servicos'
+      fullPath: '/servicos'
+      preLoaderRoute: typeof ServicosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ordens/$numero': {
+      id: '/ordens/$numero'
+      path: '/ordens/$numero'
+      fullPath: '/ordens/$numero'
+      preLoaderRoute: typeof OrdensNumeroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ordens/nova': {
+      id: '/ordens/nova'
+      path: '/ordens/nova'
+      fullPath: '/ordens/nova'
+      preLoaderRoute: typeof OrdensNovaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ChecklistRoute: ChecklistRoute,
+  ConfiguracoesRoute: ConfiguracoesRoute,
+  HistoricoRoute: HistoricoRoute,
+  ServicosRoute: ServicosRoute,
+  OrdensNumeroRoute: OrdensNumeroRoute,
+  OrdensNovaRoute: OrdensNovaRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
