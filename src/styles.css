@@ -150,3 +150,12 @@
 @utility shadow-card {
   box-shadow: var(--shadow-card);
 }
+
+/* Logo-derived navigation identity; dark overlay keeps light text readable. */
+.brand-nav {
+  --brand-1: var(--primary);
+  --brand-2: var(--chart-2);
+  background:
+    linear-gradient(color-mix(in oklab, var(--foreground) 32%, transparent), color-mix(in oklab, var(--foreground) 32%, transparent)),
+    linear-gradient(115deg, var(--brand-1), var(--brand-2));
+}

@@ -5,4 +5,4 @@ export const Route = createFileRoute("/ordens/nova")({
   head: () => pageHead("Nova O.S.", "Emita uma ordem com fotos, checklist, garantia e assinatura."),
   component: Page,
 });
-function Page() { return <OrderEditor />; }
+function Page() { return <OrderEditor numero={undefined} />; }
