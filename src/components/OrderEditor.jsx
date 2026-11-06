@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { PhotoGallery } from "@/components/PhotoGallery";
 import { SignaturePad } from "@/components/SignaturePad";
 import {
   ACESSORIOS, MARCA_IOS, MARCAS_ANDROID, MODELOS_IPHONE,
@@ -238,7 +239,7 @@ export function OrderEditor({ numero }) {
         <p className="text-right text-xs text-muted-foreground">{os.observacoes.length}/500</p>
       </Card>
 
-      <Card title="Fotos do aparelho (opcional)"><div className="grid grid-cols-3 gap-3">{["Frente", "Traseira", "Adicional"].map(label => { const photo = os.fotos?.find(f => f.label === label); return <div key={label}><label className="flex aspect-square cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-dashed bg-muted text-muted-foreground">{photo ? <img src={photo.data} alt={label} className="size-full object-cover" /> : <Camera className="size-6" />}<input type="file" aria-label={`Foto ${label}`} accept="image/*" capture="environment" className="hidden" onChange={async e => { const file = e.target.files?.[0]; if (!file) return; try { const data = await imageFromFile(file); setOs(p => ({ ...p, fotos: [...(p.fotos || []).filter(f => f.label !== label), { label, data }] })); } catch { toast.error("Não foi possível abrir a foto."); } }} /></label><div className="mt-1 flex items-center justify-between"><span className="text-xs">{label}</span>{photo && <Button variant="ghost" size="icon" aria-label={`Remover foto ${label}`} onClick={() => set("fotos", os.fotos.filter(f => f.label !== label))}><Trash2 className="size-3" /></Button>}</div></div>; })}</div></Card>
+      <Card title="Fotos do aparelho (opcional)"><PhotoGallery fotos={os.fotos || []} onChange={(f) => set("fotos", f)} /></Card>
 
       <Card title="Assinatura do cliente (opcional)">
         <SignaturePad ref={sig} initialValue={savedSignature} />
