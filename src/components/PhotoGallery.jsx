@@ -4,12 +4,20 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { imageFromFile } from "@/services/images";
+import { CameraCapture } from "@/components/CameraCapture";
 
 export const MAX_FOTOS = 8;
 const ETIQUETAS = ["Frente", "Traseira", "Avaria", "Placa interna", "Peça trocada", "Saída"];
 
 export function PhotoGallery({ fotos = [], onChange }) {
   const [zoom, setZoom] = useState(null);
+  const [camera, setCamera] = useState(false);
+  const cameraInput = React.useRef(null);
+  const toque = () => typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
+  const abrirCamera = () => {
+    if (!toque() && navigator.mediaDevices?.getUserMedia) setCamera(true);
+    else cameraInput.current?.click();
+  };
   const restantes = MAX_FOTOS - fotos.length;
 
   const adicionar = async (files) => {
@@ -50,14 +58,17 @@ export function PhotoGallery({ fotos = [], onChange }) {
           </label>
         )}
         {restantes > 0 && (
-          <label className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border border-dashed bg-muted text-muted-foreground hover:bg-accent sm:hidden">
+          <button type="button" onClick={abrirCamera} className="flex aspect-square flex-col items-center justify-center gap-1 rounded-lg border border-dashed bg-muted text-muted-foreground hover:bg-accent">
             <Camera className="size-6" />
             <span className="text-xs font-medium">Tirar foto</span>
-            <input type="file" aria-label="Tirar foto" accept="image/*" capture="environment" className="hidden" onChange={(e) => { adicionar(e.target.files); e.target.value = ""; }} />
-          </label>
+          </button>
         )}
+        <input ref={cameraInput} type="file" aria-label="Tirar foto" accept="image/*" capture="environment" className="hidden" onChange={(e) => { adicionar(e.target.files); e.target.value = ""; }} />
       </div>
       <datalist id="etiquetas-foto">{ETIQUETAS.map((e) => <option key={e} value={e} />)}</datalist>
+      {camera && (
+        <CameraCapture onClose={() => setCamera(false)} onCapture={(data) => { setCamera(false); onChange([...fotos, { label: ETIQUETAS[fotos.length % ETIQUETAS.length], data }]); }} />
+      )}
       {zoom && (
         <div role="dialog" aria-label="Foto ampliada" className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/80 p-4" onClick={() => setZoom(null)}>
           <img src={zoom.data} alt={zoom.label} className="max-h-full max-w-full rounded-lg object-contain" />
