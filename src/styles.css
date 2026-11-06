@@ -152,10 +152,46 @@
 }
 
 /* Logo-derived navigation identity; dark overlay keeps light text readable. */
-.brand-nav {
+.brand-header {
   --brand-1: var(--primary);
   --brand-2: var(--chart-2);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  color: var(--primary-foreground);
   background:
-    linear-gradient(color-mix(in oklab, var(--foreground) 32%, transparent), color-mix(in oklab, var(--foreground) 32%, transparent)),
-    linear-gradient(115deg, var(--brand-1), var(--brand-2));
+    radial-gradient(60% 120% at 8% 0%, color-mix(in oklab, var(--brand-1) 90%, white) 0%, transparent 60%),
+    radial-gradient(50% 140% at 92% 10%, var(--brand-2) 0%, transparent 65%),
+    radial-gradient(70% 120% at 55% 120%, color-mix(in oklab, var(--brand-1) 60%, var(--brand-2)) 0%, transparent 70%),
+    linear-gradient(120deg, color-mix(in oklab, var(--brand-1) 70%, black), color-mix(in oklab, var(--brand-2) 70%, black));
+}
+.brand-header::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  z-index: -1;
+  background:
+    radial-gradient(30% 40% at 30% 40%, color-mix(in oklab, var(--brand-2) 70%, transparent), transparent 70%),
+    radial-gradient(25% 35% at 70% 60%, color-mix(in oklab, var(--brand-1) 70%, transparent), transparent 70%);
+  filter: blur(40px);
+  animation: brand-drift 18s ease-in-out infinite alternate;
+}
+.brand-header::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(color-mix(in oklab, black 28%, transparent), color-mix(in oklab, black 18%, transparent));
+}
+@keyframes brand-drift {
+  from { transform: translate3d(-6%, -4%, 0) rotate(0deg); }
+  to { transform: translate3d(6%, 4%, 0) rotate(12deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .brand-header::before { animation: none; }
+}
+.brand-nav {
+  border-top: 1px solid color-mix(in oklab, white 18%, transparent);
+  background: color-mix(in oklab, black 12%, transparent);
+  backdrop-filter: blur(6px);
 }
