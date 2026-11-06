@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { logoColors } from "@/services/logo-colors";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { LayoutDashboard, ClipboardList, Wrench, ListChecks, Settings, Smartphone, Plus, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,9 @@ export function WorkshopShell({ children }) {
   const { settings, error, reload } = useWorkshop();
   const location = useLocation();
   const navigate = useNavigate();
+  const [brand, setBrand] = useState(null);
+  const logo = settings?.empresa.logo;
+  useEffect(() => { let alive = true; logoColors(logo).then(c => { if (alive) setBrand(c); }).catch(() => alive && setBrand(null)); return () => { alive = false; }; }, [logo]);
   useEffect(() => { if (settings && !settings.configured && location.pathname !== "/configuracoes") navigate({ to: "/configuracoes" }); }, [settings, location.pathname, navigate]);
   if (error) return <main className="mx-auto max-w-lg p-8"><h1 className="text-xl font-bold">Dados locais indisponíveis</h1><p role="alert" className="my-4 text-muted-foreground">{error}</p><Button onClick={reload}><RefreshCw className="size-4" />Tentar novamente</Button></main>;
   if (!settings) return <main className="p-8 text-muted-foreground" role="status">Abrindo assistência…</main>;
@@ -21,9 +25,9 @@ export function WorkshopShell({ children }) {
         </Link>
         {settings.configured && <Button asChild size="sm"><Link to="/ordens/nova"><Plus className="size-4" /><span>Nova O.S.</span></Link></Button>}
       </div>
-      <nav aria-label="Navegação principal" className="mx-auto flex max-w-6xl overflow-x-auto px-2 sm:px-6">
-        {links.map(([to, label, Icon]) => <Button key={to} asChild variant="ghost" className={`h-12 shrink-0 rounded-none border-b-2 px-3 text-xs sm:px-4 sm:text-sm ${location.pathname === to ? "border-primary bg-accent text-primary" : "border-transparent text-muted-foreground"}`}><Link to={to}><Icon className="size-4" />{label}</Link></Button>)}
-      </nav>
+      <div className="brand-nav" style={brand ? { "--brand-1": brand[0], "--brand-2": brand[1] } : undefined}><nav aria-label="Navegação principal" className="mx-auto flex max-w-6xl overflow-x-auto px-2 sm:px-6">
+        {links.map(([to, label, Icon]) => <Button key={to} asChild variant="ghost" className={`h-12 shrink-0 rounded-none border-b-2 px-3 text-xs sm:px-4 sm:text-sm ${location.pathname === to ? "border-primary-foreground bg-primary-foreground/20 text-primary-foreground" : "border-transparent text-primary-foreground/80 hover:bg-primary-foreground/10 hover:text-primary-foreground"}`}><Link to={to}><Icon className="size-4" />{label}</Link></Button>)}
+      </nav></div>
     </header>
     {children}
   </div>;
