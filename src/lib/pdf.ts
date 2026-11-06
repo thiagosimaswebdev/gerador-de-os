@@ -58,10 +58,13 @@ export async function gerarPDF(o: OSData, logo: string | null, assinatura: strin
   section("Acessórios recebidos"); text(o.acessorios.join(" • ") || "Nenhum item marcado");
   if (o.observacoes.trim()) { section("Observações"); text(o.observacoes.trim()); }
   if (o.fotos?.length) {
-    section("Fotos do aparelho"); ensure(53);
-    const top = y;
-    for (const [i, foto] of o.fotos.slice(0, 3).entries()) { const x = M + i * 62; await image(foto.data, x, top, 57, 43); doc.setFontSize(8).text(foto.label, x + 28.5, top + 48, { align: "center" }); }
-    y += 53;
+    section("Fotos do aparelho");
+    const fotos = o.fotos.slice(0, 8);
+    for (let r = 0; r < fotos.length; r += 4) {
+      ensure(48); const top = y;
+      for (const [i, foto] of fotos.slice(r, r + 4).entries()) { const x = M + i * 46.5; await image(foto.data, x, top, 42, 34); doc.setFontSize(7.5).text(foto.label || "", x + 21, top + 38, { align: "center" }); }
+      y += 44;
+    }
   }
   section("Termo de garantia"); text(TERMO, 7.8);
   ensure(62); y += 5;
