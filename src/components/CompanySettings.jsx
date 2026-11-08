@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useWorkshop } from "@/contexts/WorkshopContext";
 import { imageFromFile } from "@/services/images";
+import { BackupSettings } from "@/components/BackupSettings";
 
 const fields = [["nome", "Nome da empresa"], ["fantasia", "Nome fantasia"], ["telefone", "Telefone"], ["whatsapp", "WhatsApp"], ["instagram", "Instagram"], ["email", "E-mail"], ["endereco", "Endereço"], ["cidade", "Cidade"], ["estado", "Estado"]];
 export function CompanySettings() {
@@ -27,5 +28,6 @@ export function CompanySettings() {
       <div className="grid gap-5 sm:grid-cols-2">{fields.map(([key, label]) => <div key={key} className={key === "endereco" ? "space-y-2 sm:col-span-2" : "space-y-2"}><Label htmlFor={`company-${key}`}>{label}{key === "nome" && " *"}</Label><Input id={`company-${key}`} required={key === "nome"} maxLength={key === "endereco" ? 200 : 100} type={key === "email" ? "email" : "text"} inputMode={["telefone", "whatsapp"].includes(key) ? "tel" : undefined} value={company[key] || ""} onChange={e => setCompany(p => ({ ...p, [key]: e.target.value }))} className="h-11" /></div>)}</div>
       <Button type="submit" disabled={busy} size="lg"><Save className="size-4" />{busy ? "Salvando…" : "Salvar empresa"}</Button>
     </form>
+    <BackupSettings />
   </main>;
 }

@@ -3,7 +3,9 @@
 - [x] Empresa, serviços e checklist editáveis.
 - [x] Dashboard e histórico com edição/status.
 - [x] Ordem com fotos, assinatura persistida e PDF/WhatsApp.
-- [x] Revisão PWA e verificação de fluxos e telas.- [ ] Cabeçalho com cores extraídas da logo.
+- [x] Revisão PWA e verificação de fluxos e telas.
+- [x] Cabeçalho com cores extraídas da logo.
 - [x] Galeria de fotos até 8 com legendas, zoom e PDF em grade
 - [x] Botão Tirar foto com câmera ao vivo (getUserMedia) no desktop
-- [ ] Responder: ramificação com versão anterior rodando separado (drafts/publish)
+- [x] Responder: ramificação com versão anterior rodando separado (drafts/publish)
+- [ ] Cópia completa e restauração validada, com testes e verificação pela tela.
