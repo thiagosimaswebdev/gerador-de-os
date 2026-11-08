@@ -14,3 +14,4 @@
 
 - Keep shared local state in WorkshopProvider and navigation in WorkshopShell at the root; leaf routes render individual screens so navigation preserves loaded settings and orders.
 - Use IndexedDB through SettingsRepository and OrderRepository; preserve order warranty snapshots when catalog entries change.
+- Keep TanStack Start route generation explicitly typed in Vite config because its registration footer contains TypeScript declarations.
