@@ -1,5 +1,6 @@
 import { openDB } from "idb";
 import { CHECKLIST, numeroUnico, STATUS } from "@/lib/os";
+import { parseBackup, serializeBackup } from "@/services/backup";
 
 let database;
 export const StorageProvider = {
@@ -54,5 +55,37 @@ export const OrderRepository = {
     await tx.store.put(saved);
     await tx.done;
     return saved;
+  },
+};
+
+export const BackupRepository = {
+  async export() {
+    const db = await StorageProvider.open();
+    const tx = db.transaction(["settings", "orders"], "readonly");
+    const [settings, orders] = await Promise.all([tx.objectStore("settings").get("app"), tx.objectStore("orders").getAll()]);
+    await tx.done;
+    return serializeBackup(settings, orders);
+  },
+  async restore(text, restoreSettings = false) {
+    const backup = parseBackup(text);
+    const db = await StorageProvider.open();
+    const tx = db.transaction(["settings", "orders"], "readwrite");
+    let added = 0;
+    try {
+      const store = tx.objectStore("orders");
+      const existing = new Set(await store.getAllKeys());
+      for (const order of backup.orders) {
+        if (existing.has(order.numero)) continue;
+        await store.add({ ...order, emissao: new Date(order.emissao) });
+        added++;
+      }
+      if (restoreSettings) await tx.objectStore("settings").put(backup.settings, "app");
+      await tx.done;
+      return { added, skipped: backup.orders.length - added };
+    } catch (error) {
+      try { tx.abort(); } catch { /* Transaction may already be aborted. */ }
+      await tx.done.catch(() => {});
+      throw error;
+    }
   },
 };
