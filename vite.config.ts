@@ -9,6 +9,11 @@ import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
   tanstackStart: {
+    // Start appends TypeScript registrations; keep the generated tree typed.
+    router: {
+      generatedRouteTree: "routeTree.gen.ts",
+      disableTypes: false,
+    },
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
     server: { entry: "server" },
